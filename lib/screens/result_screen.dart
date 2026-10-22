@@ -3,11 +3,62 @@ import 'package:provider/provider.dart';
 
 import '../providers/quiz_provider.dart';
 import '../theme/app_theme.dart';
-import 'category_screen.dart';
-import 'quiz_screen.dart';
+import 'discussion_screen.dart';
+import 'login_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   const ResultScreen({super.key});
+
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: AppTheme.cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: const Text(
+          'Log Out?',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppTheme.darkBrown,
+          ),
+        ),
+        content: const Text(
+          'Yakin ingin keluar dari QuizPM?',
+          style: TextStyle(
+            color: AppTheme.primaryColor,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+            },
+            child: const Text('Batal'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (_) => const LoginScreen(),
+                ),
+                    (route) => false,
+              );
+            },
+            icon: const Icon(Icons.logout_rounded),
+            label: const Text('Ya, Keluar'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primaryColor,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +73,9 @@ class ResultScreen extends StatelessWidget {
         : (score / totalQuestions) * 100;
 
     final String category = quiz.selectedCategory;
-    final String userName =
-    quiz.userName.isEmpty ? 'Teman' : quiz.userName;
+    final String userName = quiz.userName.trim().isEmpty
+        ? 'Teman'
+        : quiz.userName.trim();
 
     String message;
     IconData resultIcon;
@@ -35,12 +87,21 @@ class ResultScreen extends StatelessWidget {
       message = 'Bagus! Terus latihan agar hasilmu makin baik.';
       resultIcon = Icons.workspace_premium_rounded;
     } else {
-      message = 'Jangan menyerah! Yuk, coba lagi dan pelajari materinya.';
+      message =
+      'Jangan menyerah! Yuk, coba lagi dan pelajari materinya.';
       resultIcon = Icons.menu_book_rounded;
     }
 
     return Scaffold(
       appBar: AppBar(
+        // Tombol panah kembali di kiri atas.
+        leading: IconButton(
+          tooltip: 'Kembali',
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
         title: const Text(
           'Hasil Kuis',
           style: TextStyle(
@@ -48,6 +109,15 @@ class ResultScreen extends StatelessWidget {
           ),
         ),
         automaticallyImplyLeading: false,
+        actions: [
+          // Tombol logout tetap di kanan atas.
+          IconButton(
+            tooltip: 'Log Out',
+            onPressed: () => _showLogoutDialog(context),
+            icon: const Icon(Icons.logout_rounded),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SafeArea(
         child: Center(
@@ -62,7 +132,7 @@ class ResultScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 10),
 
-                  // Ikon hasil kuis
+                  // Ikon hasil kuis.
                   Center(
                     child: Container(
                       width: 100,
@@ -104,7 +174,7 @@ class ResultScreen extends StatelessWidget {
 
                   const SizedBox(height: 26),
 
-                  // Kartu hasil
+                  // Kartu hasil kuis.
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
@@ -147,7 +217,7 @@ class ResultScreen extends StatelessWidget {
 
                         const SizedBox(height: 22),
 
-                        // Nilai dalam bentuk lingkaran
+                        // Nilai dalam bentuk lingkaran.
                         Container(
                           width: 150,
                           height: 150,
@@ -185,7 +255,7 @@ class ResultScreen extends StatelessWidget {
 
                         const SizedBox(height: 24),
 
-                        // Rincian jawaban
+                        // Jumlah jawaban benar, salah, dan total.
                         Row(
                           children: [
                             Expanded(
@@ -234,60 +304,24 @@ class ResultScreen extends StatelessWidget {
 
                   const SizedBox(height: 26),
 
-                  // Tombol ulangi kategori yang sama
+                  // Hanya tombol Lihat Pembahasan.
                   ElevatedButton.icon(
-                    onPressed: totalQuestions == 0
-                        ? null
-                        : () {
-                      final String name = quiz.userName;
-                      final String selectedCategory =
-                          quiz.selectedCategory;
-
-                      quiz.startQuiz(
-                        name,
-                        category: selectedCategory,
-                      );
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => QuizScreen(
-                            category: selectedCategory,
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.refresh_rounded),
-                    label: const Text('Ulangi Kuis'),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // Tombol memilih kategori lain
-                  OutlinedButton.icon(
                     onPressed: () {
-                      final String name = quiz.userName;
-
-                      quiz.startQuiz(name);
-
-                      Navigator.pushAndRemoveUntil(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const CategoryScreen(),
+                          builder: (_) => const DiscussionScreen(),
                         ),
-                            (route) => route.isFirst,
                       );
                     },
-                    icon: const Icon(Icons.category_rounded),
-                    label: const Text('Pilih Kategori Lain'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppTheme.primaryColor,
+                    icon: const Icon(Icons.menu_book_rounded),
+                    label: const Text('Lihat Pembahasan'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
                       minimumSize: const Size(
                         double.infinity,
-                        52,
-                      ),
-                      side: const BorderSide(
-                        color: AppTheme.primaryColor,
+                        54,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -296,20 +330,6 @@ class ResultScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 12),
-
-                  // Tombol kembali ke halaman sebelumnya
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).popUntil(
-                            (route) => route.isFirst,
-                      );
-                    },
-                    icon: const Icon(Icons.home_rounded),
-                    label: const Text('Kembali ke Awal'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppTheme.darkBrown,
-                    ),
-                  ),
                 ],
               ),
             ),
