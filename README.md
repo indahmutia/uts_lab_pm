@@ -10,4 +10,4 @@ Alur Aplikasi    : Pengguna login atau mendaftar akun,Pengguna masuk ke halaman 
 Target Pengguna  : QuizPM ditujukan untuk mahasiswa atau pelajar yang sedang mempelajari Flutter, Dart, UI/UX, dan Pemrograman Mobile, khususnya pemula yang ingin menguji pemahaman mereka dengan cara yang mudah dan praktis.
 
 LINK FIGMA : https://www.figma.com/design/KYM47K1DCnPCRE7IAL3KLU/Untitled?node-id=0-1&t=uxt80uND6hzcps6Q-1
-LINK VIDEO PRESENTASI : 
+LINK VIDEO PRESENTASI : https://drive.google.com/drive/folders/1sJeC9jOLwjHt9R0y5Qa640ksc0-fVLbp
